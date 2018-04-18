@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc
+				http://www.springframework.org/schema/mvc/spring-mvc.xsd
+				http://www.springframework.org/schema/beans
+				http://www.springframework.org/schema/beans/spring-beans.xsd
+				http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<!-- 启动基于注解的HandlerMapp，并设置类型转换服务 -->
+	<mvc:annotation-driven  />
+     
+    <!-- 配置不需要经过Spring MVC处理的URL路径 -->
+    <mvc:resources mapping="/static/**" location="/static/"/>
+    <!-- 注解扫描范围 -->
+	<context:component-scan base-package="mycinema.web" />
+	<!-- 配置文件上传组件 -->
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!-- 设置上传文件的最大尺寸1024字节=1K，这里是1000K -->
+        <property name="maxUploadSize">
+            <value>1024000</value>
+        </property>
+        <property name="defaultEncoding">
+            <value>UTF-8</value>
+        </property>
+	</bean>
+	
+	
+	<!-- ViewResolver 视图解析器 -->
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+	  <property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />
+		<!-- 前缀：从根目录到视图文件夹 -->
+		<property name="prefix" value="/WEB-INF/jsp/" />
+		<!-- 后缀：视图文件的后缀名 -->
+		<property name="suffix" value=".jsp" />
+	</bean>
+</beans>

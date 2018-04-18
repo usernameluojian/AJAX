@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ 	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mycinema.dao.MovieMapper">
+	<sql id="movieJoinCategory">
+	select m.*, c.`NAME` as CategoryName from Movie m left join Category c on m.`CategoryId`=c.`Id`
+	</sql>
+	<select id="getAll" resultType="Movie">
+		<include refid="movieJoinCategory" />
+	</select>
+	<select id="fetchById" parameterType="int" resultType="Movie">
+		<include refid="movieJoinCategory" /> where m.Id=#{id}
+	</select>
+	<select id="getMovies" parameterType="int" resultType="Movie">
+		<include refid="movieJoinCategory" /> 
+		<if test="cid>0">
+			where m.CategoryId=#{cid}
+		</if>
+	</select>
+	<select id="getMoviesPagings" resultType="Movie">
+		<include refid="movieJoinCategory" />
+		<where>
+			<if test="cid>0">
+				and m.CategoryId=#{cid}
+			</if>
+			<if test="title!=null and title!=''">
+				and m.Title like CONCAT('%',#{title},'%')
+			</if>
+		</where>
+		limit #{startRow}, #{maxRows}
+	</select>
+	<select id="fetchMovieRows" resultType="int">
+		select count(m.Id) from Movie m 
+		<where>
+			<if test="cid>0">
+				and m.CategoryId=#{cid}
+			</if>
+			<if test="title!=null and title!=''">
+				and m.Title like CONCAT('%',#{title},'%')
+			</if>
+		</where>
+	</select>
+	
+	<insert id="add" parameterType="Movie" keyProperty="id" useGeneratedKeys="true">
+		INSERT INTO Movie(MovieCode, CategoryId, Title, Director, DateReleased) VALUES(#{movieCode},#{categoryId},#{title},#{director},#{dateReleased})
+	</insert>
+	<delete id="delete" parameterType="int">
+		delete from Movie where Id=#{id}
+	</delete>
+	<update id="update" parameterType="Movie">
+		update Movie set MovieCode=#{movieCode}, CategoryId=#{categoryId}, Title=#{title}, Director=#{director}, DateReleased=#{dateReleased} where Id=#{id}
+	</update>
+</mapper>
